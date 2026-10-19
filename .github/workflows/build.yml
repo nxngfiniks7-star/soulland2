@@ -23,7 +23,17 @@ jobs:
           for v in 2864 2860 2859 2855 2847; do
             sed -i "s/14\.23\.5\.[0-9]*/14.23.5.$v/" build.gradle
             echo "=== ลอง Forge 14.23.5.$v ==="
-            gradle setupCIWorkspace build --no-daemon && exit 0
+            if gradle setupCIWorkspace build --no-daemon > build.log 2>&1; then
+              tail -5 build.log
+              exit 0
+            fi
+            if grep -q "error:" build.log; then
+              echo "=== COMPILE ERRORS (Forge $v) ==="
+              grep -A3 "error:" build.log | head -60
+              exit 1
+            fi
+            echo "=== ล้มเหลวที่ $v (ไม่ใช่ error คอมไพล์) ==="
+            tail -15 build.log
           done
           exit 1
       - uses: actions/upload-artifact@v4
