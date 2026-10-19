@@ -21,7 +21,8 @@ jobs:
           unzip -q SoulLand-github.zip -d proj
           cd proj
           sed -i 's/setUnlocalizedName/setTranslationKey/; s/getTabIconItem/createIcon/' src/main/java/com/soulland/mod/ModItems.java
-          for v in 2864 2860 2859 2855 2847; do
+          sed -i 's/lengthVector()/length()/' src/main/java/com/soulland/mod/SoulSkills.java
+          for v in 2847 2855 2859 2860 2864; do
             sed -i "s/14\.23\.5\.[0-9]*/14.23.5.$v/" build.gradle
             echo "=== ลอง Forge 14.23.5.$v ==="
             if gradle setupCIWorkspace build --no-daemon > build.log 2>&1; then
